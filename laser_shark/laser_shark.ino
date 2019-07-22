@@ -6,31 +6,58 @@ const int in3 = 4;
 const int in4 = 3;
 
 const int ledPin = 7;
+const int buzzerPin = 2;
 
 const int irReceiverAnalogPin = A0;
 
 long duration, distance;
 int irSensorValue;
 
+boolean isHit = false;
+
 void setup()
 {
-  pinMode(trigPin, OUTPUT);
+  pinMode(irReceiverAnalogPin, INPUT);
   pinMode(echoPin, INPUT);
+    
+  pinMode(trigPin, OUTPUT);
   pinMode (in1, OUTPUT);
   pinMode (in2, OUTPUT);
   pinMode (in3, OUTPUT);
   pinMode (in4, OUTPUT);
   pinMode(ledPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+  
+  Serial.begin(9600);
 }
   
 void loop()
 {
   irSensorValue = analogRead(irReceiverAnalogPin);
 
-  if(sensorValue < 100){ //checks if object is there or not
-    digitalWrite(ledPin, HIGH);
-  }else{
+   Serial.print("\nsensor = ");
+  Serial.print(irSensorValue);
+
+  if(irSensorValue < 100){ //checks if object is there or not
     digitalWrite(ledPin, LOW);
+    noTone(buzzerPin);
+  }else{
+    digitalWrite(ledPin, HIGH);
+    tone(buzzerPin, 500);
+    isHit = true;
+  }
+
+  if (isHit) {
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, LOW);
+
+    isHit = false;
+
+    delay(20000);
+
+    return;
   }
   
   // Reset pulse
